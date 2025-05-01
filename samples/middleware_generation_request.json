@@ -1,0 +1,22 @@
+{
+  "api_name": "Bank Payment API",
+  "framework": "fastapi",
+  "target_standard": "ondc",
+  "endpoints": [
+    {
+      "path": "/payments",
+      "method": "POST",
+      "operationId": "createPayment"
+    },
+    {
+      "path": "/payments",
+      "method": "GET",
+      "operationId": "listPayments"
+    },
+    {
+      "path": "/payments/{paymentId}",
+      "method": "GET",
+      "operationId": "getPayment"
+    }
+  ]
+}

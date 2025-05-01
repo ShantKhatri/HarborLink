@@ -1,0 +1,16 @@
+version: '1'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./harborlink.db
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./app:/app/app
+      - sqlite_data:/app/data
+
+volumes:
+  sqlite_data:

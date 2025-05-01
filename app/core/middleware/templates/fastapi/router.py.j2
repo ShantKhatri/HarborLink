@@ -1,0 +1,9 @@
+from fastapi import APIRouter, Request, HTTPException
+from fastapi.responses import JSONResponse
+
+router = APIRouter()
+
+{% for rule in transformation_rules %}
+from .endpoint_{{ rule.source_endpoint.replace('/', '_') }} import router as {{ rule.source_endpoint.replace('/', '_') }}_router
+router.include_router({{ rule.source_endpoint.replace('/', '_') }}_router)
+{% endfor %}

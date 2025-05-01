@@ -1,0 +1,9 @@
+{
+  "project_id": "f7a8b9c0-d1e2-3f4g-5h6i-7j8k9l0m1n2o",
+  "api_name": "Bank Payment API",
+  "framework": "fastapi",
+  "target_standard": "ondc",
+  "endpoint_count": 3,
+  "status": "success",
+  "file_count": 4
+}

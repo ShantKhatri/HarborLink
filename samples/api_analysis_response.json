@@ -1,0 +1,30 @@
+{
+  "api_name": "Bank Payment API",
+  "version": "1.0.0",
+  "endpoint_count": 3,
+  "analysis": {
+    "endpoint_summary": [
+      {
+        "path": "/payments",
+        "method": "POST",
+        "operationId": "createPayment",
+        "description": "Create a new payment"
+      },
+      {
+        "path": "/payments",
+        "method": "GET",
+        "operationId": "listPayments",
+        "description": "List all payments"
+      },
+      {
+        "path": "/payments/{paymentId}",
+        "method": "GET",
+        "operationId": "getPayment",
+        "description": "Get payment details"
+      }
+    ],
+    "authentication_methods": [],
+    "data_formats": ["application/json"],
+    "complexity_score": 3
+  }
+}

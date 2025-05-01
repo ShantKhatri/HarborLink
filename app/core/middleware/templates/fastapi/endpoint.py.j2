@@ -1,0 +1,70 @@
+from fastapi import APIRouter, Request, HTTPException
+from fastapi.responses import JSONResponse
+import httpx
+import json
+
+router = APIRouter()
+
+@router.{{ rule.source_method }}("{{ rule.source_endpoint }}")
+async def {{ endpoint_id }}(request: Request):
+    try:
+        # Get request body
+        request_data = await request.json()
+        
+        # Transform request using the mapping
+        transformed_request = transform_request(request_data)
+        
+        # Forward to target API
+        async with httpx.AsyncClient() as client:
+            target_response = await client.{{ rule.target_method }}(
+                "{{ rule.target_endpoint }}",
+                json=transformed_request,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            # Transform response
+            target_data = target_response.json()
+            transformed_response = transform_response(target_data)
+            
+            return JSONResponse(content=transformed_response, status_code=target_response.status_code)
+    
+    except Exception as e:
+        return JSONResponse(
+            content={"error": str(e)},
+            status_code=500
+        )
+
+def transform_request(data):
+    """Transform request based on the mapping rule"""
+    # In a real implementation, this would use the mapping rules
+    # For MVP, implement a basic transformation based on the mapping
+    
+    # Dummy implementation
+    transformed_data = {}
+    
+    # Apply mapping rules from JSON structure
+    mapping_rules = {{ rule.request_mapping }}
+    
+    # Basic implementation
+    # This is simplified for MVP - in real app, this would be more sophisticated
+    if "context" not in transformed_data:
+        transformed_data["context"] = {}
+    
+    if "message" not in transformed_data:
+        transformed_data["message"] = {}
+    
+    return transformed_data
+
+def transform_response(data):
+    """Transform response based on the mapping rule"""
+    # In a real implementation, this would use the mapping rules
+    # For MVP, implement a basic transformation based on the mapping
+    
+    # Dummy implementation
+    transformed_data = {}
+    
+    # Apply mapping rules from JSON structure
+    mapping_rules = {{ rule.response_mapping }}
+    
+    # This is simplified for MVP - in real app, would be more sophisticated
+    return transformed_data

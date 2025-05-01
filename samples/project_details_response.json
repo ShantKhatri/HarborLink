@@ -1,0 +1,14 @@
+{
+  "id": "f7a8b9c0-d1e2-3f4g-5h6i-7j8k9l0m1n2o",
+  "api_name": "Bank Payment API",
+  "framework": "fastapi",
+  "target_standard": "ondc",
+  "created_at": "2025-04-29T14:30:00Z",
+  "updated_at": "2025-04-29T14:35:00Z",
+  "generated_code": {
+    "main.py": "from fastapi import FastAPI, HTTPException\nfrom pydantic import BaseModel\nimport requests\n\napp = FastAPI(title=\"ONDC Payment Gateway\")\n\n# Model definitions\nclass ONDCPayment(BaseModel):\n    transaction_id: str\n    amount: float\n    context: dict\n\n@app.post(\"/ondc/payments\")\nasync def create_ondc_payment(payment: ONDCPayment):\n    # Transform ONDC request to Bank API format\n    bank_request = {\n        \"amount\": payment.amount,\n        \"currency\": \"INR\",\n        \"accountId\": payment.transaction_id,\n        \"description\": f\"ONDC payment {payment.transaction_id}\"\n    }\n    \n    # Call original bank API\n    response = requests.post(\n        \"https://api.bank.com/v1/payments\",\n        json=bank_request\n    )\n    \n    if response.status_code != 200:\n        raise HTTPException(status_code=response.status_code, detail=\"Payment failed\")\n    \n    bank_response = response.json()\n    \n    # Transform to ONDC format\n    return {\n        \"transaction_id\": bank_response[\"id\"],\n        \"status\": \"COMPLETED\" if bank_response[\"status\"] == \"completed\" else \"PENDING\",\n        \"amount\": bank_response[\"amount\"],\n        \"timestamp\": bank_response[\"createdAt\"]\n    }\n",
+    "models.py": "from pydantic import BaseModel\nfrom typing import List, Optional\nfrom enum import Enum\n\nclass PaymentStatus(str, Enum):\n    PENDING = \"PENDING\"\n    COMPLETED = \"COMPLETED\"\n    FAILED = \"FAILED\"\n\nclass ONDCContext(BaseModel):\n    domain: str\n    country: str\n    city: str\n    action: str\n    timestamp: str\n\nclass ONDCPayment(BaseModel):\n    transaction_id: str\n    amount: float\n    context: ONDCContext",
+    "requirements.txt": "fastapi>=0.95.0\nuvicorn>=0.21.0\nrequests>=2.28.0\npydantic>=1.10.7",
+    "Dockerfile": "FROM python:3.10-slim\n\nWORKDIR /app\n\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\n\nCOPY . .\n\nCMD [\"uvicorn\", \"main:app\", \"--host\", \"0.0.0.0\", \"--port\", \"8000\"]"
+  }
+}
